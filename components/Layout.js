@@ -9,7 +9,7 @@ export default function Layout({ children }) {
     <h1 className="mb-8">
       <Link href="/">
         <a className="font-black leading-none text-black no-underline text-7xl font-display">
-          Next.Js Starter Blog
+          Retic
         </a>
       </Link>
     </h1>
@@ -17,7 +17,7 @@ export default function Layout({ children }) {
     <h1 className="mb-2">
       <Link href="/">
         <a className="text-2xl font-black text-black no-underline font-display">
-          Next.Js Starter Blog
+          Retic
         </a>
       </Link>
     </h1>

@@ -1,6 +1,6 @@
 export default {
   siteMetadata: {
-    title: "Next.js Starter Blog",
+    title: "Retic",
     author: {
       name: "Jose Felix",
       summary: "who works building clean user interfaces with React.",
