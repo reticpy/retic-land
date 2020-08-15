@@ -5,16 +5,21 @@ import Bio from "components/Bio";
 import SEO from "components/Seo";
 import { getSortedPosts } from "utils/posts";
 
-export default function Home({ posts }) {
+export default function Home({ posts, folders }) {
   return (
     <Layout>
       <SEO title="All posts" />
       <Bio className="my-14" />
+      <Link href={"/manual"} as={`/manual`}>
+        <a className="text-4xl font-bold text-orange-600 font-display">
+          Manual
+        </a>
+      </Link>
       {posts.map(({ frontmatter: { title, description, date }, slug }) => (
         <article key={slug}>
           <header className="mb-2">
             <h3 className="mb-2">
-              <Link href={"/post/[slug]"} as={`/post/${slug}`}>
+              <Link href={"/manual/[slug]"} as={`/manual/${slug}`}>
                 <a className="text-4xl font-bold text-orange-600 font-display">
                   {title}
                 </a>
@@ -32,11 +37,12 @@ export default function Home({ posts }) {
 }
 
 export async function getStaticProps() {
-  const posts = getSortedPosts();
+  const { posts, folders } = getSortedPosts();
 
   return {
     props: {
       posts,
+      folders,
     },
   };
 }
