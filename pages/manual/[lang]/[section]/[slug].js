@@ -5,8 +5,8 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import Layout from "components/Layout";
 import Image from "components/Image";
 import SEO from "components/Seo";
-import { getPostBySlug, getPostsSlugs } from "utils/posts";
-import Bio from "components/Bio";
+import { getPostBySlug, getPostsSlugs, getSlugs } from "utils/posts";
+import LayoutDrawer from "components/LayoutDrawer";
 
 const CodeBlock = ({ language, value }) => {
   return <SyntaxHighlighter language={language}>{value}</SyntaxHighlighter>;
@@ -21,9 +21,15 @@ const MarkdownImage = ({ alt, src }) => (
   />
 );
 
-export default function Post({ post, frontmatter, nextPost, previousPost }) {
+export default function Post({
+  post,
+  frontmatter,
+  nextPost,
+  previousPost,
+  items,
+}) {
   return (
-    <Layout>
+    <LayoutDrawer items={items}>
       <SEO
         title={frontmatter.title}
         description={frontmatter.description || post.excerpt}
@@ -34,7 +40,6 @@ export default function Post({ post, frontmatter, nextPost, previousPost }) {
           <h1 className="mb-2 text-6xl font-black leading-none font-display">
             {frontmatter.title}
           </h1>
-          <p className="text-sm">{frontmatter.date}</p>
         </header>
         <ReactMarkdown
           className="mb-4 prose-sm prose sm:prose lg:prose-lg"
@@ -43,13 +48,13 @@ export default function Post({ post, frontmatter, nextPost, previousPost }) {
           renderers={{ code: CodeBlock, image: MarkdownImage }}
         />
         <hr className="mt-4" />
-        <footer>
-          <Bio className="mt-8 mb-16" />
-        </footer>
       </article>
       <nav className="flex justify-between mb-10">
         {previousPost ? (
-          <Link href={"/manual/[slug]"} as={`/manual/${previousPost.slug}`}>
+          <Link
+            href={"/manual/[lang]/[section]/[slug]"}
+            as={`/manual/${previousPost.lang}/${previousPost.section}/${previousPost.slug}`}
+          >
             <a className="text-lg font-bold">
               ← {previousPost.frontmatter.title}
             </a>
@@ -58,38 +63,34 @@ export default function Post({ post, frontmatter, nextPost, previousPost }) {
           <div />
         )}
         {nextPost ? (
-          <Link href={"/manual/[slug]"} as={`/manual/${nextPost.slug}`}>
+          <Link
+            href={"/manual/[lang]/[section]/[slug]"}
+            as={`/manual/${nextPost.lang}/${nextPost.section}/${nextPost.slug}`}
+          >
             <a className="text-lg font-bold">{nextPost.frontmatter.title} →</a>
           </Link>
         ) : (
           <div />
         )}
       </nav>
-    </Layout>
+    </LayoutDrawer>
   );
 }
 
 export async function getStaticPaths() {
-  let paths = getPostsSlugs();
-  paths.push({
-    params: { lang: "es", slug: "introduction" },
-  });
+  let paths = getPostsSlugs({ isRescursive: true });
   return {
     paths,
     fallback: false,
   };
 }
 
-export async function getStaticProps({ params: { lang, slug } }) {
-  const postData = getPostBySlug(slug);
-
-  if (!postData.previousPost) {
-    postData.previousPost = null;
-  }
-
-  if (!postData.nextPost) {
-    postData.nextPost = null;
-  }
-
-  return { props: postData };
+export async function getStaticProps({ params: { slug, lang, section } }) {
+  const postData = getPostBySlug({ slug, lang, section });
+  const items = getSlugs({
+    dir: `${process.cwd()}/content/manual/${lang}`,
+    isRescursive: true,
+    parent: lang,
+  });
+  return { props: { ...postData, items } };
 }

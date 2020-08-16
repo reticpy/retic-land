@@ -50,6 +50,7 @@ export async function getStaticProps({ params: { lang } }) {
   const items = getSlugs({
     dir: `${process.cwd()}/content/manual/${lang}`,
     isRescursive: true,
+    parent: lang,
   });
   return { props: { ...postData, items } };
 }
