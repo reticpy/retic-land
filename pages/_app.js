@@ -9,23 +9,13 @@ const theme = createMuiTheme({
     danger: orange[500],
   },
   typography: {
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
+    fontFamily:
+      "Roboto,Helvetica Neue Light,Helvetica Neue,Helvetica,Arial,Lucida Grande,sans-serif",
   },
   palette: {
     textColor: "#fff",
     background: {
-      default: "#475050",
+      // default: "#475050",
     },
     primary: blue,
     secondary: blue,

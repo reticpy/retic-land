@@ -5,15 +5,23 @@ import cfg from "../cfg";
 
 const contentPath = `${process.cwd()}/content/${cfg.contentPath}`;
 
-export function findItems(dir, isRescursive = false, parent = null) {
+export function findItems({
+  dir,
+  isRescursive = false,
+  parent = null,
+  hasContent = false,
+} = {}) {
   const folders = fs.readdirSync(dir).map((name) => {
     const filePath = path.join(dir, name);
     const fileStat = fs.lstatSync(filePath);
     const isFolder = fileStat.isDirectory();
     const children =
-      (isRescursive && isFolder && findItems(filePath, isRescursive, name)) ||
+      (isRescursive &&
+        isFolder &&
+        findItems({ dir: filePath, isRescursive, parent: name, hasContent })) ||
       [];
-    const content = (!isFolder && getContentFile(name, filePath)) || null;
+    const content =
+      (hasContent && !isFolder && getContentFile(name, filePath)) || null;
     return {
       name,
       parent,
@@ -57,7 +65,7 @@ export function getPostFolders() {
       directory: folderName,
       filename: `${folderName}.md`,
     }));
-  const folders = findItems(contentPath);
+  const folders = findItems({ dir: contentPath });
   return { postFolders, folders };
 }
 
@@ -116,17 +124,30 @@ export function getPostsSlugs(rescursive = false) {
 
   return paths;
 }
-export function getSlugs(isRescursive = false) {
-  const paths = findItems(contentPath, isRescursive).map(({ parent, name }) => {
-    const slug = name.replace(".md", "");
-    return {
-      params: {
-        slug: slug,
-        lang: isRescursive ? parent : slug,
-      },
-    };
-  });
-  return paths;
+
+function formatSlugs(items) {
+  const _items = items.map(
+    ({ name, parent, isFolder, isRescursive, children, content }) => {
+      const _children = children?.length ? formatSlugs(children) : [];
+      const slug = name.replace(".md", "");
+      return {
+        params: {
+          slug: slug,
+          lang: isRescursive ? parent : slug,
+          isFolder,
+          children: _children,
+          content,
+          parent
+        },
+      };
+    }
+  );
+  return _items;
+}
+export function getSlugs({ dir = contentPath, isRescursive = false } = {}) {
+  const paths = findItems({ dir, isRescursive });
+  const items = formatSlugs(paths);
+  return items;
 }
 
 export function getPostBySlug(slug) {

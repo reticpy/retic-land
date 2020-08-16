@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
   },
   logoIcon: {
     // width: 150,
-    // height: 40,
+    height: 40,
     maxHeight: 40,
     transition: theme.transitions.create(["width", "height"], {
       duration: theme.transitions.duration.shortest,
@@ -32,6 +32,7 @@ export default function Logo() {
     <div className={classes.root}>
       <img
         className={classes.logoIcon}
+        // src="/images/logo-dark.png"
         src="/images/logo-title.png"
         alt="Retic"
       />

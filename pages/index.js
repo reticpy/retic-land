@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import Layout from "components/Layout";
-import Bio from "components/Bio";
 import SEO from "components/Seo";
 import { getSortedPosts } from "utils/posts";
 
@@ -9,7 +8,6 @@ export default function Home({ posts, folders }) {
   return (
     <Layout>
       <SEO title="All posts" />
-      <Bio className="my-14" />
       <Link href={"/manual"} as={`/manual`}>
         <a className="text-4xl font-bold text-orange-600 font-display">
           Manual
@@ -20,12 +18,11 @@ export default function Home({ posts, folders }) {
           <header className="mb-2">
             <h3 className="mb-2">
               <Link href={"/manual/[slug]"} as={`/manual/${slug}`}>
-                <a className="text-4xl font-bold text-orange-600 font-display">
+                <a className="text-4xl font-bold font-display">
                   {title}
                 </a>
               </Link>
             </h3>
-            <span className="text-sm">{date}</span>
           </header>
           <section>
             <p className="mb-8 text-lg">{description}</p>
