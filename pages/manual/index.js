@@ -34,19 +34,6 @@ export default function Manual({ content, frontmatter }) {
   );
 }
 
-export async function getStaticPaths() {
-  //add path to /manual
-  const paths = [
-    {
-      params: { slug: "manual" },
-    },
-  ];
-  return {
-    paths,
-    fallback: false,
-  };
-}
-
 export async function getStaticProps() {
   //get file from default languages
   const postData = getContentFile(

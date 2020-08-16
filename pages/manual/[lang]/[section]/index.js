@@ -6,7 +6,6 @@ import Layout from "components/Layout";
 import Image from "components/Image";
 import SEO from "components/Seo";
 import { getPostBySlug, getPostsSlugs } from "utils/posts";
-import Bio from "components/Bio";
 
 const CodeBlock = ({ language, value }) => {
   return <SyntaxHighlighter language={language}>{value}</SyntaxHighlighter>;
@@ -51,9 +50,6 @@ export default function Section({ post, frontmatter, nextPost, previousPost }) {
           renderers={{ code: CodeBlock, image: MarkdownImage, link: LinkTo }}
         />
         <hr className="mt-4" />
-        <footer>
-          <Bio className="mt-8 mb-16" />
-        </footer>
       </article>
       <nav className="flex justify-between mb-10">
         {previousPost ? (
