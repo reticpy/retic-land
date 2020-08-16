@@ -1,9 +1,9 @@
 import ReactMarkdown from "react-markdown/with-html";
 import Link from "next/link";
-import Layout from "components/Layout";
 import SEO from "components/Seo";
 
 import { getContentFile, getSlugs } from "utils/posts";
+import LayoutDrawer from "components/LayoutDrawer";
 const LinkTo = ({ text, url }) => {
   return (
     <Link href={url}>
@@ -11,9 +11,9 @@ const LinkTo = ({ text, url }) => {
     </Link>
   );
 };
-export default function Lang({ content, frontmatter }) {
+export default function Lang({ content, frontmatter, items }) {
   return (
-    <Layout>
+    <LayoutDrawer items={items}>
       <SEO title={frontmatter.title} description={frontmatter.description} />
       <article>
         <header className="mb-8">
@@ -22,19 +22,19 @@ export default function Lang({ content, frontmatter }) {
           </h1>
         </header>
         <ReactMarkdown
-          className="mb-4 prose-sm prose sm:prose lg:prose-lg"
+          className="mb-4"
           escapeHtml={false}
           source={content}
           renderers={{ link: LinkTo }}
         />
       </article>
-    </Layout>
+    </LayoutDrawer>
   );
 }
 
 export async function getStaticPaths() {
   //add paths
-  const paths = getSlugs(false);
+  const paths = getSlugs();
   return {
     paths,
     fallback: false,
@@ -47,5 +47,9 @@ export async function getStaticProps({ params: { lang } }) {
     "introduction.md",
     `${process.cwd()}/content/manual/${lang}/introduction.md`
   );
-  return { props: postData };
+  const items = getSlugs({
+    dir: `${process.cwd()}/content/manual/${lang}`,
+    isRescursive: true,
+  });
+  return { props: { ...postData, items } };
 }
