@@ -6,7 +6,7 @@ import SEO from "components/Seo";
 import { getContentFile } from "utils/posts";
 const LinkTo = ({ href, children }) => {
   return (
-    <Link href={`/manual/[lang]`} as={href}>
+    <Link href={`/manual/[lang]/[section]`} as={href}>
       <a className="text-4xl font-bold text-orange-600 font-display">
         {children}
       </a>

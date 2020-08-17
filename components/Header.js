@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     margin: theme.spacing(2),
     color: theme.palette.textColor,
+    // color: theme.palette.darkColor,
     textTransform: "uppercase",
     fontWeight: 500,
   },
@@ -33,13 +34,14 @@ export default function Header({ isFull = false, body = null }) {
   const getToolbar = () => (
     <Toolbar>
       {body}
-      <Link href={"/"}>
+      <Link href={"/manual"}>
         <a>
           <Logo />
         </a>
       </Link>
       <Typography variant="h6" className={classes.title}></Typography>
-      <Link href={"/manual/[lang]/[section]"} as={`/manual/es/introduction`}>
+      {/* <Link href={"/manual/[lang]/[section]"} as={`/manual/es/introduction`}> */}
+      <Link href={"/manual"} as={`/manual`}>
         <a className={classes.menuButton}>Manual</a>
       </Link>
       <a
