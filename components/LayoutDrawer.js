@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import AppBar from "@material-ui/core/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -20,7 +20,7 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import clsx from "clsx";
 
-const drawerWidth = 240;
+const drawerWidth = 270;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,9 +40,9 @@ const useStyles = makeStyles((theme) => ({
   },
   menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up("sm")]: {
-      display: "none",
-    },
+    // [theme.breakpoints.up("sm")]: {
+    //   display: "none",
+    // },
   },
   // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
@@ -59,10 +59,15 @@ const useStyles = makeStyles((theme) => ({
 export default function LayoutDrawer({ window, children, items = [] }) {
   const classes = useStyles();
   const theme = useTheme();
+  const [desktopOpen, setDesktopOpen] = React.useState(true);
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  const handleDrawerToggle = () => {
+  const handleDrawerToggleMobile = () => {
+    setDesktopOpen(true);
     setMobileOpen(!mobileOpen);
+  };
+  const handleDrawerToggleDesktop = () => {
+    setDesktopOpen(!desktopOpen);
   };
 
   const drawer = (
@@ -82,48 +87,66 @@ export default function LayoutDrawer({ window, children, items = [] }) {
       <Header
         isFull={true}
         body={
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            className={classes.menuButton}
-          >
-            <MenuIcon />
-          </IconButton>
+          <Fragment>
+            <Hidden smUp implementation="css">
+              {" "}
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={handleDrawerToggleMobile}
+                className={classes.menuButton}
+              >
+                <MenuIcon />
+              </IconButton>
+            </Hidden>
+            <Hidden smDown implementation="css">
+              {" "}
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={handleDrawerToggleDesktop}
+                className={classes.menuButton}
+              >
+                <MenuIcon />
+              </IconButton>
+            </Hidden>
+          </Fragment>
         }
       />
-      <nav className={classes.drawer} aria-label="mailbox folders">
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Hidden smUp implementation="css">
-          <Drawer
-            container={container}
-            variant="temporary"
-            anchor={theme.direction === "rtl" ? "right" : "left"}
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
-            }}
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-        <Hidden xsDown implementation="css">
-          <Drawer
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            variant="permanent"
-            open
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-      </nav>
+      {desktopOpen ? (
+        <nav className={classes.drawer} aria-label="mailbox folders">
+          <Hidden smUp implementation="css">
+            <Drawer
+              container={container}
+              variant="temporary"
+              anchor={theme.direction === "rtl" ? "right" : "left"}
+              open={mobileOpen}
+              onClose={handleDrawerToggleMobile}
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+              ModalProps={{
+                keepMounted: true, // Better open performance on mobile.
+              }}
+            >
+              {drawer}
+            </Drawer>
+          </Hidden>
+          <Hidden xsDown implementation="css">
+            <Drawer
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+              variant="permanent"
+              open
+            >
+              {drawer}
+            </Drawer>
+          </Hidden>
+        </nav>
+      ) : null}
       <main className={clsx(" prose sm:prose lg:prose-lg", classes.content)}>
         <div className={classes.toolbar} />
         {children}

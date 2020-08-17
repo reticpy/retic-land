@@ -2,8 +2,7 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown/with-html";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 
-import Layout from "components/Layout";
-import Image from "components/Image";
+// import Image from "components/Image";
 import SEO from "components/Seo";
 import { getPostBySlug, getPostsSlugs, getSlugs } from "utils/posts";
 import LayoutDrawer from "components/LayoutDrawer";
@@ -12,14 +11,14 @@ const CodeBlock = ({ language, value }) => {
   return <SyntaxHighlighter language={language}>{value}</SyntaxHighlighter>;
 };
 
-const MarkdownImage = ({ alt, src }) => (
-  <Image
-    alt={alt}
-    src={require(`../../../../content/assets/${src}`)}
-    previewSrc={require(`../../../../content/assets/${src}?lqip`)}
-    className="w-full"
-  />
-);
+// const MarkdownImage = ({ alt, src }) => (
+//   <Image
+//     alt={alt}
+//     src={require(`../../../../content/assets/${src}`)}
+//     previewSrc={require(`../../../../content/assets/${src}?lqip`)}
+//     className="w-full"
+//   />
+// );
 
 export default function Post({
   post,
@@ -42,10 +41,10 @@ export default function Post({
           </h1>
         </header>
         <ReactMarkdown
-          className="mb-4 prose-sm prose sm:prose lg:prose-lg"
+          className="mb-4"
           escapeHtml={false}
           source={post.content}
-          renderers={{ code: CodeBlock, image: MarkdownImage }}
+          renderers={{ code: CodeBlock /*image: MarkdownImage*/ }}
         />
         <hr className="mt-4" />
       </article>

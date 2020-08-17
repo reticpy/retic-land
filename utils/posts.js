@@ -16,12 +16,11 @@ export function findItems({
     const fileStat = fs.lstatSync(filePath);
     const isFolder = fileStat.isDirectory();
     const children =
-      (isRescursive &&
-        isFolder &&
-        findItems({ dir: filePath, isRescursive, parent: name, hasContent })) ||
-      [];
+      isRescursive && isFolder
+        ? findItems({ dir: filePath, isRescursive, parent: name, hasContent })
+        : [];
     const content =
-      (hasContent && !isFolder && getContentFile(name, filePath)) || null;
+      hasContent && !isFolder ? getContentFile(name, filePath) : null;
     return {
       name,
       parent,
@@ -67,15 +66,16 @@ function getFormattedDate(date) {
 function getSlugsFromList(items) {
   let paths = [];
   items.forEach(({ params: { slug, lang, section, children, content } }) => {
+    const _children = children?.length ? getSlugsFromList(children) : [];
     paths.push({
       params: {
         slug,
         lang,
         section,
         content,
+        children: _children,
       },
     });
-    const _children = children?.length ? getSlugsFromList(children) : [];
     paths = [...paths, ..._children];
   });
   return paths;
@@ -83,19 +83,30 @@ function getSlugsFromList(items) {
 
 export function getPostsSlugs({
   isRescursive = false,
-  hasContent = true,
+  hasContent = false,
+  hasFilter = true,
+  lang = null,
+  dir = null,
 } = {}) {
   const pathsFolders = findItems({
-    dir: contentPath,
+    dir: dir || contentPath,
     isRescursive,
     hasContent,
+    parent: lang,
   });
-  const items = formatSlugs(pathsFolders);
-  const paths = getSlugsFromList(items);
-  //filter
-  let posts = paths.filter(
-    ({ params: { lang, slug, section } }) => section && lang && slug
+  const items = formatSlugs(pathsFolders, lang);
+
+  const sortedItems = items.sort(
+    (a, b) => a.params.isFolder - b.params.isFolder
   );
+  const paths = getSlugsFromList(sortedItems);
+  //filter
+  let posts = hasFilter
+    ? paths.filter(({ params: { lang: _lang, slug, section } }) =>
+        section && lang ? _lang === lang : _lang && slug
+      )
+    : paths;
+
   return posts;
 }
 
@@ -103,8 +114,8 @@ function formatSlugs(items, lang = null) {
   const _items = items.map(
     ({ name, parent, isFolder, isRescursive, children, content }) => {
       const _name = name.replace(".md", "");
-      const _slug = !isFolder && parent ? _name : null;
-      const _section = isFolder && parent ? _name : parent;
+      const _slug = !isFolder && parent && parent !== lang ? _name : null;
+      const _section = (isFolder && parent) || parent === lang ? _name : parent;
       const _lang = !parent ? _name : lang;
       const _children = children?.length ? formatSlugs(children, _lang) : [];
       const _content = content
@@ -133,7 +144,7 @@ export function getSlugs({
 } = {}) {
   const paths = findItems({ dir, isRescursive, parent, hasContent });
   const items = formatSlugs(paths, parent);
-  return items;
+  return items.sort((a, b) => a.params.isFolder - b.params.isFolder);
 }
 
 export function getPostBySlug({ lang, section, slug }) {
@@ -141,6 +152,7 @@ export function getPostBySlug({ lang, section, slug }) {
     dir: `${contentPath}/${lang}`,
     isRescursive: true,
     hasContent: true,
+    lang,
   });
 
   const postIndex = items.findIndex(
@@ -152,8 +164,47 @@ export function getPostBySlug({ lang, section, slug }) {
     params: { content: { frontmatter, content, excerpt } = {} },
   } = items[postIndex];
 
-  const previousPost = items[postIndex + 1]?.params?.content || null;
-  const nextPost = items[postIndex - 1]?.params?.content || null;
+  const previousPost = items[postIndex - 1]?.params?.content || null;
+  const nextPost = items[postIndex + 1]?.params?.content || null;
 
+  return { frontmatter, post: { content, excerpt }, previousPost, nextPost };
+}
+function getPostIndex(items = [], { lang, section }) {
+  //check valid
+  if (!items?.length) return {};
+  let postIndex = items.findIndex(
+    ({ params }) => params.lang === lang && params.section === section
+  );
+  const { params: sectionPost } = items[postIndex] || {};
+
+  if (!sectionPost?.content)
+    return getPostIndex(sectionPost?.children || [], { lang, section });
+
+  //get next and prev
+  const previousPost = items[postIndex - 1]?.params?.content || null;
+  const nextPost = items[postIndex + 1]?.params?.content || null;
+  //return data
+  return { sectionPost, previousPost, nextPost };
+}
+
+export function getPostBySection({ lang, section }) {
+  const items = getPostsSlugs({
+    dir: `${contentPath}/${lang}`,
+    isRescursive: true,
+    hasContent: true,
+    hasFilter: false,
+    lang,
+  });
+
+  const { sectionPost, previousPost = null, nextPost = null } = getPostIndex(
+    items,
+    {
+      lang,
+      section,
+    }
+  );
+  //check if it is child
+  const { frontmatter = null, content = null, excerpt = null } =
+    sectionPost?.content || {};
   return { frontmatter, post: { content, excerpt }, previousPost, nextPost };
 }
