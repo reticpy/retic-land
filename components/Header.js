@@ -39,7 +39,7 @@ export default function Header({ isFull = false, body = null }) {
         </a>
       </Link>
       <Typography variant="h6" className={classes.title}></Typography>
-      <Link href={"/manual/[lang]"} as={`/manual/es`}>
+      <Link href={"/manual/[lang]/[section]"} as={`/manual/es/introduction`}>
         <a className={classes.menuButton}>Manual</a>
       </Link>
       <a

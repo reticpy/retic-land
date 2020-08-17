@@ -48,10 +48,10 @@ export default function Sidebar({ items = [], propsClasses = {} }) {
         variant="subtitle2"
         className={clsx(
           classes.title,
-          item.isFolder ? "uppercase font-bold" : "capitalize"
+          item.isFolder || !item.parent ? "uppercase font-bold" : "capitalize"
         )}
       >
-        {item.isFolder ? item.section : item.slug}
+        {item.slug || item.section}
       </Typography>
     );
   };
@@ -59,22 +59,27 @@ export default function Sidebar({ items = [], propsClasses = {} }) {
   const getItemsHTML = (items, count = {}) => {
     return (
       <div>
-        {items.map(({ params, index }) => {
+        {items.map(({ params }) => {
           const _nodeId = count.value;
           count.value = count.value + 1;
           const _children = params.isFolder
             ? getItemsHTML(params.children, count)
             : null;
+          const linkHref =
+            !params.isFolder && params.slug
+              ? "/manual/[lang]/[section]/[slug]"
+              : "/manual/[lang]/[section]";
+          const linkAs =
+            !params.isFolder && params.slug
+              ? `/manual/${params.lang}/${params.section}/${params.slug}`
+              : `/manual/${params.lang}/${params.section}`;
           return (
             <TreeItem
               nodeId={_nodeId.toString()}
               key={_nodeId}
               label={
                 !params.isFolder ? (
-                  <Link
-                    href={"/manual/[lang]/[section]/[slug]"}
-                    as={`/manual/${params.lang}/${params.section}/${params.slug}`}
-                  >
+                  <Link href={linkHref} as={linkAs}>
                     <a className={classes.menuButton}>{getItemTree(params)}</a>
                   </Link>
                 ) : (
@@ -89,12 +94,7 @@ export default function Sidebar({ items = [], propsClasses = {} }) {
       </div>
     );
   };
-  const itemsHTML = items?.length
-    ? getItemsHTML(
-        items.sort((a, b) => a.params.isFolder - b.params.isFolder),
-        { value: 1 }
-      )
-    : null;
+  const itemsHTML = items?.length ? getItemsHTML(items, { value: 1 }) : null;
 
   return (
     <div className={propsClasses}>

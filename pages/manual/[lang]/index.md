@@ -1,5 +1,7 @@
 import ReactMarkdown from "react-markdown/with-html";
 import Link from "next/link";
+import { useRouter } from "next/router";
+
 import SEO from "components/Seo";
 
 import { getContentFile, getSlugs } from "utils/posts";
@@ -11,25 +13,11 @@ const LinkTo = ({ text, url }) => {
     </Link>
   );
 };
-export default function Lang({ content, frontmatter, items }) {
-  return (
-    <LayoutDrawer items={items}>
-      <SEO title={frontmatter.title} description={frontmatter.description} />
-      <article>
-        <header className="mb-8">
-          <h1 className="mb-2 text-6xl font-black leading-none font-display">
-            {frontmatter.title}
-          </h1>
-        </header>
-        <ReactMarkdown
-          className="mb-4"
-          escapeHtml={false}
-          source={content}
-          renderers={{ link: LinkTo }}
-        />
-      </article>
-    </LayoutDrawer>
-  );
+export default function Lang({  }) {
+  const router = useRouter();
+  router.push(`/manual/es/introduction`);
+
+  // return ();
 }
 
 export async function getStaticPaths() {
