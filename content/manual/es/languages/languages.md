@@ -5,8 +5,8 @@ description: La documentación de Retic está disponible en los siguientes idiom
 
 ## Español
 
-[Español](/manual/es)
+[Español](/manual/es/introduction)
 
 ## Ingles
 
-[Ingles](/manual/en)
+[Ingles](/manual/en/introduction)

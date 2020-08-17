@@ -9,6 +9,11 @@ module.exports = {
         destination: "/manual/:lang/introduction",
         permanent: true,
       },
+      {
+        source: "/",
+        destination: "/manual",
+        permanent: true,
+      },
     ];
   },
   ...withPlugins([optimizedImages]),
