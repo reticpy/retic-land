@@ -1,10 +1,9 @@
 {
   "manual": {
     "es": {
-      "introduction": {
-          
-      },
+      "introduction": {},
       "getting-started": {
+        "requirements": {},
         "virtual-environments": {},
         "installation": {},
         "first-steps": {}
@@ -15,7 +14,7 @@
         "services": {},
         "settings": {},
         "apps": {},
-        "hooks": {}
+        "api": {}
       },
       "tools": {
         "environment": {},

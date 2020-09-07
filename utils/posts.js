@@ -28,9 +28,14 @@ export function findItems({
       isRescursive,
       children,
       content,
+      title: content?.frontmatter?.title || null,
+      position: content?.frontmatter?.position || 0,
+      group: content?.frontmatter?.group || 0,
     };
   });
-  return folders;
+  //sort
+  const sortedFolders = folders.sort((a, b) => a.position - b.position);
+  return sortedFolders;
 }
 export function getContentFile(filename, file) {
   // Get raw content from file
@@ -41,7 +46,6 @@ export function getContentFile(filename, file) {
 
   const frontmatter = {
     ...data,
-    date: data.date ? getFormattedDate(data.date) : null,
   };
 
   // Remove .md file extension from post name
@@ -55,29 +59,24 @@ export function getContentFile(filename, file) {
   };
 }
 
-// Get day in format: Month day, Year. e.g. April 19, 2020
-function getFormattedDate(date) {
-  const options = { year: "numeric", month: "long", day: "numeric" };
-  const formattedDate = date?.toLocaleDateString("en-US", options) || null;
-
-  return formattedDate;
-}
-
 function getSlugsFromList(items) {
   let paths = [];
-  items.forEach(({ params: { slug, lang, section, children, content } }) => {
-    const _children = children?.length ? getSlugsFromList(children) : [];
-    paths.push({
-      params: {
-        slug,
-        lang,
-        section,
-        content,
-        children: _children,
-      },
-    });
-    paths = [...paths, ..._children];
-  });
+  items.forEach(
+    ({ params: { slug, lang, section, children, content, group } }) => {
+      const _children = children?.length ? getSlugsFromList(children) : [];
+      paths.push({
+        params: {
+          slug,
+          lang,
+          section,
+          content,
+          children: _children,
+          group,
+        },
+      });
+      paths = [...paths, ..._children];
+    }
+  );
   return paths;
 }
 
@@ -96,9 +95,7 @@ export function getPostsSlugs({
   });
   const items = formatSlugs(pathsFolders, lang);
 
-  const sortedItems = items.sort(
-    (a, b) => a.params.isFolder - b.params.isFolder
-  );
+  const sortedItems = items.sort((a, b) => a.params.group - b.params.group);
   const paths = getSlugsFromList(sortedItems);
   //filter
   let posts = hasFilter
@@ -112,11 +109,12 @@ export function getPostsSlugs({
 
 function formatSlugs(items, lang = null) {
   const _items = items.map(
-    ({ name, parent, isFolder, isRescursive, children, content }) => {
+    ({ name, parent, isFolder, children, content, title, group }) => {
       const _name = name.replace(".md", "");
       const _slug = !isFolder && parent && parent !== lang ? _name : null;
       const _section = (isFolder && parent) || parent === lang ? _name : parent;
       const _lang = !parent ? _name : lang;
+      const _child = parent && children?.length ? children.shift() : null;
       const _children = children?.length ? formatSlugs(children, _lang) : [];
       const _content = content
         ? { ...content, slug: _slug, lang: _lang, section: _section }
@@ -124,12 +122,14 @@ function formatSlugs(items, lang = null) {
       return {
         params: {
           slug: _slug,
+          title: _child?.title || title,
           lang: _lang,
           section: _section,
           isFolder,
           children: _children,
           content: _content,
           parent,
+          group: _child?.group || group,
         },
       };
     }
@@ -144,7 +144,7 @@ export function getSlugs({
 } = {}) {
   const paths = findItems({ dir, isRescursive, parent, hasContent });
   const items = formatSlugs(paths, parent);
-  return items.sort((a, b) => a.params.isFolder - b.params.isFolder);
+  return items.sort((a, b) => a.params.group - b.params.group);
 }
 
 export function getPostBySlug({ lang, section, slug }) {

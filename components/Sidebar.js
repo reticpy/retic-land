@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import clsx from "clsx";
+import Link from "next/link";
 
 import { makeStyles } from "@material-ui/core/styles";
 import TreeView from "@material-ui/lab/TreeView";
@@ -7,8 +10,6 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import TreeItem from "@material-ui/lab/TreeItem";
 
 import Typography from "@material-ui/core/Typography";
-import clsx from "clsx";
-import Link from "next/link";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,32 +27,40 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Sidebar({ items = [], propsClasses = {} }) {
+  const router = useRouter();
+  const { slug, section, lang } = router.query;
   const classes = useStyles();
-  const [expanded, setExpanded] = React.useState(["2"]);
+  const [expanded, setExpanded] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
+  const [itemsHTML, setItemsHTML] = React.useState([]);
 
   const handleToggle = (event, nodeIds) => {
-    console.log("event: ", event);
-    console.log("nodeIds: ", nodeIds);
     setExpanded(nodeIds);
   };
 
   const handleSelect = (event, nodeIds) => {
-    console.log("event: ", event);
-    console.log("nodeIds: ", nodeIds);
     setSelected(nodeIds);
   };
 
-  const getItemTree = (item) => {
+  useEffect(() => {
+    setItemsHTML(items?.length ? getItemsHTML(items, { value: 1 }) : null);
+  }, [items]);
+
+  const getItemTree = (item, nodeId) => {
+    if (item.slug === slug && item.section === section && item.lang === lang) {
+      setSelected([nodeId.toString()]);
+    } else if (!item.slug && item.section === section && item.lang === lang) {
+      setExpanded([...expanded, nodeId.toString()]);
+    }
     return (
       <Typography
         variant="subtitle2"
         className={clsx(
           classes.title,
-          item.isFolder || !item.parent ? "uppercase font-bold" : "capitalize"
+          item.isFolder || !item.parent ? "uppercase font-bold" : ""
         )}
       >
-        {item.slug || item.section}
+        {item.title}
       </Typography>
     );
   };
@@ -80,10 +89,12 @@ export default function Sidebar({ items = [], propsClasses = {} }) {
               label={
                 !params.isFolder ? (
                   <Link href={linkHref} as={linkAs}>
-                    <a className={classes.menuButton}>{getItemTree(params)}</a>
+                    <a className={classes.menuButton}>
+                      {getItemTree(params, _nodeId)}
+                    </a>
                   </Link>
                 ) : (
-                  getItemTree(params)
+                  getItemTree(params, _nodeId)
                 )
               }
             >
@@ -94,7 +105,6 @@ export default function Sidebar({ items = [], propsClasses = {} }) {
       </div>
     );
   };
-  const itemsHTML = items?.length ? getItemsHTML(items, { value: 1 }) : null;
 
   return (
     <div className={propsClasses}>

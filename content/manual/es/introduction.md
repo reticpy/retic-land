@@ -1,32 +1,27 @@
 ---
 title: Introducción
-description: ¿Aprende qué es Retic?
+description: Sobre Retic
+position: 1
+group: 1
 ---
 
-Retic (basado en [reticulated python][wiki_retic]) es un marco de trabajo para crear soluciones en Python.
+Retic es un marco de trabajo para crear soluciones en Python.
 
-## Sobre Retic
+Diseñado para atacar los siguientes puntos en el desarrollo de software:
 
-Está diseñado para atacar las siguientes desventajas en el desarrollo de software:
+- **Curva de aprendizaje**: Python posee una curva de aprendizaje corta.
 
-* **Curva de aprendizaje:** Facilitar la curva de aprendizaje en el desarrollo web.
-  
-* **Problemas con Hosting:** Configuración fácil y rapida en los servidores.
-  
-* **Artificial Intelligence:** Las librerias más importantes están escritas en Python.
+- **Hosting**: Configuración fácil y rapida en los servidores.
 
-Retic está basado en **express.js**, es simple, rápido y fácil de utilizar. Nuestra visión es qué no necesitas una carrera de informatica para crear soluciones para ti y la sociedad.
+- **Inteligencia artificial**: Las librerias más importantes están escritas en Python.
 
 ### Inicio rápido
 
-* [Configure su entorno local para el desarrollo.][docs_installation]
-  
-* [Conozca los conceptos fundamentales de diseño y la arquitectura de las aplicaciones retictivas.][docs_architecture]
-  
-* Trabaja en un tutorial completo para crear tu primera aplicación.
+- [Configure su entorno local para el desarrollo.](/manual/es/getting-started/requirements "/manual/[lang]/[section]/[slug]")
 
-[wiki_retic]: https://es.wikipedia.org/wiki/Malayopython_reticulatus
+- [Instalar Retic.](/manual/es/getting-started/installation "/manual/[lang]/[section]/[slug]")
 
-[docs_installation]:./installation.md
+- [Trabaja en un tutorial completo para crear tu primera aplicación.](/manual/es/tutorial/set-up "/manual/[lang]/[section]/[slug]")
+- 
+- [Conozca los conceptos fundamentales de diseño y la arquitectura de las aplicaciones.](/manual/es/fundamentals/architecture "/manual/[lang]/[section]/[slug]")
 
-[docs_architecture]:./architecture.md
