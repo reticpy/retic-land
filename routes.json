@@ -1,0 +1,29 @@
+{
+  "manual": {
+    "es": {
+      "introduction": {},
+      "getting-started": {
+        "requirements": {},
+        "virtual-environments": {},
+        "installation": {},
+        "first-steps": {}
+      },
+      "concepts": {
+        "controllers": {},
+        "routing": {},
+        "services": {},
+        "settings": {},
+        "apps": {},
+        "api": {}
+      },
+      "tools": {
+        "environment": {},
+        "middlewares": {},
+        "responses": {},
+        "general": {},
+        "validations": {}
+      },
+      "examples": {}
+    }
+  }
+}
