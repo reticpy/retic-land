@@ -1,15 +1,11 @@
 import Link from "next/link";
 import ReactMarkdown from "react-markdown/with-html";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 
 // import Image from "components/Image";
 import SEO from "components/Seo";
 import { getPostBySlug, getPostsSlugs, getSlugs } from "utils/posts";
 import LayoutDrawer from "components/LayoutDrawer";
-
-const CodeBlock = ({ language, value }) => {
-  return <SyntaxHighlighter language={language}>{value}</SyntaxHighlighter>;
-};
+import { LinkTo, CodeBlock } from "utils/markdown";
 
 // const MarkdownImage = ({ alt, src }) => (
 //   <Image
@@ -44,7 +40,10 @@ export default function Post({
           className="mb-4"
           escapeHtml={false}
           source={post.content}
-          renderers={{ code: CodeBlock /*image: MarkdownImage*/ }}
+          renderers={{
+            code: CodeBlock,
+            link: LinkTo /*image: MarkdownImage*/,
+          }}
         />
         <hr className="mt-4" />
       </article>
@@ -77,9 +76,17 @@ export default function Post({
 }
 
 export async function getStaticPaths() {
-  let paths = getPostsSlugs({ isRescursive: true });
+  let paths = getPostsSlugs({
+    isRescursive: true,
+    hasFilter: false,
+    hasContent: true,
+  });
+  //filter
+  let posts = paths.filter(
+    ({ params: { lang, slug, section } }) => section && lang && slug
+  );
   return {
-    paths,
+    paths: posts,
     fallback: false,
   };
 }
@@ -90,6 +97,7 @@ export async function getStaticProps({ params: { slug, lang, section } }) {
     dir: `${process.cwd()}/content/manual/${lang}`,
     isRescursive: true,
     parent: lang,
+    hasContent: true,
   });
   return { props: { ...postData, items } };
 }

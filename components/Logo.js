@@ -1,5 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 import React from "react";
+import { Typography } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,8 +33,7 @@ export default function Logo() {
     <div className={classes.root}>
       <img
         className={classes.logoIcon}
-        // src="/images/logo-dark.png"
-        src="/images/logo-title.png"
+        // src="/images/logo-title.png"
         alt="Retic"
       />
     </div>

@@ -1,7 +1,9 @@
 import "styles/global.css";
 import "typeface-open-sans";
 import "typeface-merriweather";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core";
+import { createMuiTheme , ThemeProvider  } from "@material-ui/core";
+
+// import { ThemeProvider } from 'styled-components'
 import { orange, blue } from "@material-ui/core/colors";
 
 const theme = createMuiTheme({
